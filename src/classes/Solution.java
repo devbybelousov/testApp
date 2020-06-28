@@ -13,6 +13,7 @@ public class Solution {
     private String operation;
     private int numberA;
     private int numberB;
+    private boolean isArab;
 
     public Solution() {
     }
@@ -27,10 +28,12 @@ public class Solution {
 
     public void check() throws MyException {
         if (isNumber(a) && isNumber(b)) {
+            isArab = true;
             numberA = stringToInt(a);
             numberB = stringToInt(b);
         }
         else if (!isNumber(a) && !isNumber(b)) {
+            isArab = false;
             numberA = romanToArab(a);
             numberB = romanToArab(b);
         }
@@ -56,7 +59,8 @@ public class Solution {
                 throw new MyException("Ошибка! Неправильно введена операция над числами!");
 
         }
-        System.out.println("Решение: " + result);
+        if (isArab) System.out.println("Решение: " + result);
+        else System.out.println("Решение: " + arabToRoman(result));
     }
 
     public boolean isNumber(String en) throws MyException {
@@ -74,7 +78,7 @@ public class Solution {
         return result;
     }
 
-    public int romanToArab(String input){
+    public int romanToArab(String input) throws MyException {
         int result = 0;
         input = input.toUpperCase();
 
@@ -91,7 +95,26 @@ public class Solution {
         }
 
         if (input.length() > 0) throw new IllegalArgumentException("Ошибка конвертации римского числа!");
+        if (result < 0 || result > 10) throw new MyException("Ошибка! Число не входит в заданный промежуток! ");
         return result;
+    }
+
+    public String arabToRoman(int input){
+        List<RomanNumber> romanNumerals = RomanNumber.getReverseSortedValues();
+
+        int i = 0;
+        StringBuilder sb = new StringBuilder();
+
+        while ((input > 0) && (i < romanNumerals.size())) {
+            RomanNumber currentSymbol = romanNumerals.get(i);
+            if (currentSymbol.getValue() <= input) {
+                sb.append(currentSymbol.name());
+                input -= currentSymbol.getValue();
+            } else {
+                i++;
+            }
+        }
+        return sb.toString();
     }
 
 
